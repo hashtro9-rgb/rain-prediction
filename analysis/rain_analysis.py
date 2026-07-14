@@ -67,31 +67,31 @@ ANALYSIS_DIR.mkdir(exist_ok=True)
 
 SOURCE_NOTE = "Data: weather_forecast_data.csv"
 
-# Purple/magenta house palette
-C_PURPLE = "#6C4AB6"
-C_PURPLE2 = "#7A5FCC"
-C_PINK = "#E84393"
-C_PINK2 = "#FF4F9A"
-C_LILAC = "#B497E7"
-C_CANVAS = "#F5F3FB"
-C_INK = "#2E2440"
+# Rainfall-blues palette
+C_PURPLE = "#0F3A5F"   # navy (darkest / negative direction)
+C_PURPLE2 = "#1E6FA8"  # ocean blue
+C_PINK = "#2E9BD6"     # sky blue (primary accent / rain)
+C_PINK2 = "#38C6E0"    # cyan (bright accent)
+C_LILAC = "#8FC7EA"    # pale sky (light fill)
+C_CANVAS = "#EFF6FB"
+C_INK = "#103049"
 
 plt.rcParams.update(
     {
         "figure.dpi": 150,
         "savefig.dpi": 150,
         "font.family": "Segoe UI, DejaVu Sans, sans-serif",
-        "axes.edgecolor": "#D7CEEB",
+        "axes.edgecolor": "#C7DBEA",
         "axes.linewidth": 1.0,
         "axes.grid": True,
-        "grid.color": "#E7E0F4",
+        "grid.color": "#E1EDF6",
         "grid.linewidth": 0.8,
         "axes.titleweight": "bold",
         "axes.titlecolor": C_INK,
         "text.color": C_INK,
         "axes.labelcolor": C_INK,
-        "xtick.color": "#5B5170",
-        "ytick.color": "#5B5170",
+        "xtick.color": "#5B7A93",
+        "ytick.color": "#5B7A93",
         "figure.facecolor": "white",
         "axes.facecolor": "white",
     }
@@ -111,7 +111,7 @@ def _source(ax):
         xytext=(0.008, 0.012),
         textcoords="figure fraction",
         fontsize=7.5,
-        color="#8A80A6",
+        color="#5B7A93",
         style="italic",
     )
 
@@ -166,7 +166,7 @@ wedges, _ = ax.pie(
 )
 ax.text(0, 0.12, f"{pct_rain:.1f}%", ha="center", va="center",
         fontsize=30, fontweight="bold", color=C_PINK)
-ax.text(0, -0.22, "of days rain", ha="center", va="center", fontsize=12, color="#5B5170")
+ax.text(0, -0.22, "of days rain", ha="center", va="center", fontsize=12, color="#5B7A93")
 ax.legend(
     wedges,
     [f"No rain  ({n_norain:,})", f"Rain  ({n_rain:,})"],
@@ -213,7 +213,7 @@ for feat in FEATURES:
     arrow = "▲" if d > 0 else "▼"
     lines.append(f"{arrow} {feat:<12} {d:+.1f} {UNITS[feat]}")
 axes[5].text(0.02, 0.72, "\n".join(lines), fontsize=11, family="monospace",
-             color="#4A4066", va="top")
+             color="#103049", va="top")
 fig.suptitle("What does a rainy day look like? Feature distributions by outcome",
              fontsize=14, fontweight="bold", color=C_INK, y=0.99)
 fig.tight_layout(rect=[0, 0.02, 1, 0.97])
@@ -353,7 +353,7 @@ for name in models:
     roc_series[name] = {"fpr": fpr.tolist(), "tpr": tpr.tolist()}
     ax.plot(fpr, tpr, color=colors[name], lw=2.4,
             label=f"{name} (AUC={results[name]['roc_auc']:.3f})")
-ax.plot([0, 1], [0, 1], ls="--", color="#B9AED4", lw=1.3, label="Random (AUC=0.500)")
+ax.plot([0, 1], [0, 1], ls="--", color="#B7CFDE", lw=1.3, label="Random (AUC=0.500)")
 ax.set_xlabel("False Positive Rate", fontsize=10)
 ax.set_ylabel("True Positive Rate (Recall on rain)", fontsize=10)
 ax.set_xlim(-0.01, 1.01)
@@ -393,7 +393,7 @@ prec, rec, thr = precision_recall_curve(y_test, results[winner]["proba"])
 fig, ax = plt.subplots(figsize=(7.4, 6.2))
 ax.plot(rec, prec, color=C_PINK, lw=2.4)
 base_rate = y_test.mean()
-ax.axhline(base_rate, ls="--", color="#B9AED4", lw=1.3,
+ax.axhline(base_rate, ls="--", color="#B7CFDE", lw=1.3,
            label=f"No-skill baseline ({base_rate:.3f})")
 # mark the default 0.5 threshold operating point
 p50 = results[winner]["precision"]; r50 = results[winner]["recall"]
@@ -451,7 +451,7 @@ ax.barh(coefs.index, coefs.values, color=bar_colors)
 for i, (c, o) in enumerate(zip(coefs.values, odds.values)):
     ax.text(c + (0.05 if c >= 0 else -0.05), i, f"{c:+.2f}  (OR {o:.2f})",
             va="center", ha="left" if c >= 0 else "right", fontsize=9, color=C_INK)
-ax.axvline(0, color="#8A80A6", lw=1)
+ax.axvline(0, color="#5B7A93", lw=1)
 ax.set_xlabel("Logistic coefficient (standardized features)  ->  pushes toward RAIN", fontsize=9.5)
 pad = max(abs(coefs.min()), abs(coefs.max())) * 0.55
 ax.set_xlim(coefs.min() - pad, coefs.max() + pad)
